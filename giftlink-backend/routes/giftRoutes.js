@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
         //Task 4 Return gifts
         res.json(gifts);
     } catch (e) {
-        logger.console.error('oops something went wrong', e)
+        logger.console.error('oops something went wrong', e);
         next(e);
     }
 });
@@ -34,13 +34,13 @@ router.get('/:id', async (req, res, next) => {
 
         // Task 3: Fetch all gifts
         const id = req.params.id;
-        const gift = await collection.findOne({ id: id });
+        const gift = await collection.findOne({id: id});
 
-        if (!gift) { 
+        if (!gift) {
             return res.status(404).send("Gift not found");
         }
 
-    // Task 4: Return gifts
+        // Task 4: Return gifts
         res.json(gift);
     } catch (e) {
         next(e);
