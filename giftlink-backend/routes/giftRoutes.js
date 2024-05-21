@@ -1,47 +1,50 @@
-router.get('/', async (req, res) => {
+const express = require('express');
+const router = express.Router();
+const connectToDatabase = require('../models/db');
+const logger = require('../logger');
+
+// Get all gifts
+router.get('/', async (req, res, next) => {
+    logger.info('/ called');
     try {
-        // Task 1: Connect to MongoDB and store connection to db constant
-        // const db = {{insert code here}}
+        //Task 1 Connect to MongoDB
+        const db = await connectToDatabase();
 
-        // Task 2: use the collection() method to retrieve the gift collection
-        // {{insert code here}}
-
-        // Task 3: Fetch all gifts using the collection.find method. Chain with toArray method to convert to JSON array
-        // const gifts = {{insert code here}}
-
-        // Task 4: return the gifts using the res.json method
-        res.json(/* {{insert code here}} */);
+        //Task 2 Access the collection
+        const collection = db.collection("gifts");
+        //Task 3 Fetch all gifts
+        const gifts = await collection.find({}).toArray();
+        //Task 4 Return gifts
+        res.json(gifts);
     } catch (e) {
-        console.error('Error fetching gifts:', e);
-        res.status(500).send('Error fetching gifts');
+        logger.console.error('oops something went wrong', e)
+        next(e);
     }
 });
 
-router.get('/:id', async (req, res) => {
+// Get a single gift by ID
+router.get('/:id', async (req, res, next) => {
     try {
-        // Task 1: Connect to MongoDB and store connection to db constant
-        // const db = {{insert code here}}
+        // Task 1: Connect to MongoDB
+        const db = await connectToDatabase();
 
-        // Task 2: use the collection() method to retrieve the gift collection
-        // {{insert code here}}
+        // Task 2: Access MongoDB collection
+        const collection = db.collection("gifts");
 
+        // Task 3: Fetch all gifts
         const id = req.params.id;
+        const gift = await collection.findOne({ id: id });
 
-        // Task 3: Find a specific gift by ID using the collection.fineOne method and store in constant called gift
-        // {{insert code here}}
-
-        if (!gift) {
-            return res.status(404).send('Gift not found');
+        if (!gift) { 
+            return res.status(404).send("Gift not found");
         }
 
+    // Task 4: Return gifts
         res.json(gift);
     } catch (e) {
-        console.error('Error fetching gift:', e);
-        res.status(500).send('Error fetching gift');
+        next(e);
     }
 });
-
-
 
 // Add a new gift
 router.post('/', async (req, res, next) => {
